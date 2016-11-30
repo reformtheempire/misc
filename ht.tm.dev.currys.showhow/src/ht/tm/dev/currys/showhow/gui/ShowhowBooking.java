@@ -188,10 +188,23 @@ public class ShowhowBooking extends JFrame {
 					return;
 				}
 
+				// get selection from buttons
+
+				String buttonSelected = getSelectedButtonText(timeSelectionButtonGroup);
+				int time = 0;
+				if (buttonSelected.equals("1:00 PM")) {
+					time = 1;
+				} else if (buttonSelected.equals("2:00 PM")) {
+					time = 2;
+				} else if (buttonSelected.equals("3:00 PM")) {
+					time = 3;
+				} else if (buttonSelected.equals("4:00 PM")) {
+					time = 4;
+				}
 				// Generate a BookingDTO
 
 				BookingDTO booking = new BookingDTO(0, customerTitleBox.getText(), customerNameBox.getText(),
-						customerPhoneBox.getText(), new java.sql.Date(calendar.getDate().getTime()), 11,
+						customerPhoneBox.getText(), new java.sql.Date(calendar.getDate().getTime()), time,
 						new java.sql.Date(new Date().getTime()), 1);
 
 				System.out.println(booking);

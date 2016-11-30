@@ -85,6 +85,7 @@ public class ShowhowGui {
 		sideBar.setLayout(null);
 
 		JButton showhowButton = new JButton("View ShowHow's");
+		showhowButton.setEnabled(false);
 		showhowButton.setBounds(0, 0, 160, 75);
 		sideBar.add(showhowButton);
 
@@ -136,7 +137,7 @@ public class ShowhowGui {
 		lblCopyright.setBounds(465, 444, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblCopyright);
 
-		JLabel lblNewLabel = new JLabel("Current Version: ALPHA: 0.1.0");
+		JLabel lblNewLabel = new JLabel("Current Version: ALPHA: 0.1.1");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel.setBounds(465, 427, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblNewLabel);
