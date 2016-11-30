@@ -1,0 +1,32 @@
+-- Created by Vertabelo (http://vertabelo.com)
+-- Last modification date: 2016-11-30 19:01:45.717
+
+-- tables
+-- Table: bookings
+CREATE TABLE bookings (
+    id int NOT NULL AUTO_INCREMENT COMMENT 'incremental ID of the booking',
+    title varchar(10) NOT NULL,
+    name varchar(140) NOT NULL,
+    telephone varchar(20) NOT NULL,
+    booking_date date NOT NULL,
+    booking_time int NOT NULL,
+    created_on date NOT NULL,
+    created_by int NOT NULL COMMENT 'the user_id of the creator in users.id',
+    CONSTRAINT bookings_pk PRIMARY KEY (id)
+) COMMENT 'A table to contain bookings.';
+
+-- Table: users
+CREATE TABLE users (
+    id int NOT NULL,
+    username varchar(16) NOT NULL,
+    name varchar(16) NOT NULL,
+    password varchar(16) NOT NULL,
+    CONSTRAINT users_pk PRIMARY KEY (id)
+) COMMENT 'A table of users';
+
+-- foreign keys
+-- Reference: bookings_users (table: bookings)
+ALTER TABLE bookings ADD CONSTRAINT bookings_users FOREIGN KEY bookings_users (created_by)
+    REFERENCES users (id);
+
+-- End of file.
