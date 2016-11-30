@@ -136,9 +136,9 @@ public class ShowhowGui {
 		lblCopyright.setBounds(465, 444, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblCopyright);
 
-		JLabel lblNewLabel = new JLabel("Current Version: 0.1.0");
+		JLabel lblNewLabel = new JLabel("Current Version: ALPHA: 0.1.0");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblNewLabel.setBounds(567, 427, 125, 15);
+		lblNewLabel.setBounds(465, 427, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblNewLabel);
 
 		JScrollPane scrollPane = new JScrollPane();
