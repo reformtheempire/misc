@@ -84,6 +84,7 @@ public class ShowhowGui {
 		});
 
 		JButton adminButton = new JButton("Admin");
+		adminButton.setEnabled(false);
 		adminButton.setBounds(0, 172, 160, 75);
 		sideBar.add(adminButton);
 
