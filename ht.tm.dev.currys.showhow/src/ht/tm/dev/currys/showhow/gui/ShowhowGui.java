@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,9 +18,16 @@ import javax.swing.border.TitledBorder;
 
 import com.alee.laf.WebLookAndFeel;
 
+import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+
 public class ShowhowGui {
 
 	private JFrame frmShowhowBooker;
+	private Date date = new Date(Calendar.getInstance().getTime().getTime());
+	private JTable table;
+
 
 	/**
 	 * Launch the application.
@@ -51,7 +60,7 @@ public class ShowhowGui {
 		frmShowhowBooker = new JFrame();
 		frmShowhowBooker.setResizable(false);
 		frmShowhowBooker.setTitle("ShowHow Manager");
-		frmShowhowBooker.setBounds(100, 100, 600, 500);
+		frmShowhowBooker.setBounds(100, 100, 710, 500);
 		frmShowhowBooker.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmShowhowBooker.getContentPane().setLayout(null);
 
@@ -100,32 +109,39 @@ public class ShowhowGui {
 			}
 		});
 
-		JLabel lblWelcome = new JLabel("Good Day!");
+		JLabel lblWelcome = new JLabel("Hello There!");
 		lblWelcome.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		lblWelcome.setHorizontalAlignment(SwingConstants.CENTER);
-		lblWelcome.setBounds(196, 12, 376, 84);
+		lblWelcome.setBounds(196, 12, 496, 84);
 		frmShowhowBooker.getContentPane().add(lblWelcome);
 
 		JTextArea totalShowhowMessage = new JTextArea();
-		totalShowhowMessage.setFont(new Font("Tahoma", Font.PLAIN, 35));
-		totalShowhowMessage.setText("There are {$1}\r\nShowHows Today");
+		totalShowhowMessage.setFont(new Font("Tahoma", Font.PLAIN, 33));
+		totalShowhowMessage.setText("There are " + BookingSQLUtil.getCountByDate(date) + " ShowHows for today");
 		totalShowhowMessage.setBackground(SystemColor.control);
 		totalShowhowMessage.setEditable(false);
-		totalShowhowMessage.setBounds(190, 119, 382, 105);
+		totalShowhowMessage.setBounds(190, 119, 514, 55);
 		frmShowhowBooker.getContentPane().add(totalShowhowMessage);
 
 		JLabel lblCopyright = new JLabel("Copyright Thomas Mather 2016 - Present");
-		lblCopyright.setBounds(355, 444, 227, 15);
+		lblCopyright.setBounds(465, 444, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblCopyright);
 
 		JLabel lblNewLabel = new JLabel("Current Version: {$1}");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblNewLabel.setBounds(457, 427, 125, 15);
+		lblNewLabel.setBounds(567, 427, 125, 15);
 		frmShowhowBooker.getContentPane().add(lblNewLabel);
 
 		JLabel lblLatestVersion = new JLabel("Latest Version: {$1}");
 		lblLatestVersion.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblLatestVersion.setBounds(457, 409, 125, 15);
+		lblLatestVersion.setBounds(567, 409, 125, 15);
 		frmShowhowBooker.getContentPane().add(lblLatestVersion);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(190, 186, 502, 205);
+		frmShowhowBooker.getContentPane().add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
 	}
 }
