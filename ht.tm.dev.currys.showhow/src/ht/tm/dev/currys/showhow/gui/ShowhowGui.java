@@ -14,25 +14,33 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.TitledBorder;
 
 import com.alee.laf.WebLookAndFeel;
 
 import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
+import ht.tm.dev.currys.showhow.gui.util.TableFormat;
+import ht.tm.dev.currys.showhow.gui.util.TableFormatter;
+
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import java.awt.Toolkit;
 
 public class ShowhowGui {
 
+	public static StartupSplash splash = new StartupSplash();
 	private JFrame frmShowhowBooker;
 	private Date date = new Date(Calendar.getInstance().getTime().getTime());
-	private JTable table;
-
+	private JTable showhowTable;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		splash.setVisible(true);
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -58,6 +66,7 @@ public class ShowhowGui {
 	 */
 	private void initialize() {
 		frmShowhowBooker = new JFrame();
+		frmShowhowBooker.setIconImage(Toolkit.getDefaultToolkit().getImage(ShowhowGui.class.getResource("/com/alee/laf/optionpane/icons/question.png")));
 		frmShowhowBooker.setResizable(false);
 		frmShowhowBooker.setTitle("ShowHow Manager");
 		frmShowhowBooker.setBounds(100, 100, 710, 500);
@@ -127,21 +136,23 @@ public class ShowhowGui {
 		lblCopyright.setBounds(465, 444, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblCopyright);
 
-		JLabel lblNewLabel = new JLabel("Current Version: {$1}");
+		JLabel lblNewLabel = new JLabel("Current Version: 0.1.0");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel.setBounds(567, 427, 125, 15);
 		frmShowhowBooker.getContentPane().add(lblNewLabel);
 
-		JLabel lblLatestVersion = new JLabel("Latest Version: {$1}");
-		lblLatestVersion.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblLatestVersion.setBounds(567, 409, 125, 15);
-		frmShowhowBooker.getContentPane().add(lblLatestVersion);
-		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(190, 186, 502, 205);
 		frmShowhowBooker.getContentPane().add(scrollPane);
 		
-		table = new JTable();
-		scrollPane.setViewportView(table);
+		// get today's bookings.
+		TableFormat tf = TableFormatter.formatTable(BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime())));
+		
+		showhowTable = new JTable(tf.getData(), tf.getTableHeaders());
+		showhowTable.setFillsViewportHeight(true);
+		
+		scrollPane.setViewportView(showhowTable);
+
+		splash.dispose();
 	}
 }

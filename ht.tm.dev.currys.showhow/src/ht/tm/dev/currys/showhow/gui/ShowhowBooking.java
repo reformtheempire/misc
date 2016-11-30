@@ -6,7 +6,9 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
+import java.util.Enumeration;
 
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,6 +21,12 @@ import javax.swing.border.TitledBorder;
 
 import com.alee.laf.WebLookAndFeel;
 import com.toedter.calendar.JCalendar;
+
+import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
+import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
+import ht.tm.dev.currys.showhow.gui.alert.BookingConfirmation;
+
+import java.awt.Toolkit;
 
 public class ShowhowBooking extends JFrame {
 
@@ -51,6 +59,8 @@ public class ShowhowBooking extends JFrame {
 	 * Create the frame.
 	 */
 	public ShowhowBooking() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				ShowhowBooking.class.getResource("/com/alee/managers/notification/icons/types/calendar.png")));
 		setResizable(false);
 		setTitle("Book a ShowHow");
 		setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
@@ -159,7 +169,8 @@ public class ShowhowBooking extends JFrame {
 
 		createBookingButton.addActionListener(new ActionListener() {
 
-			@SuppressWarnings("deprecation")
+			@SuppressWarnings("deprecation") // YOU'RE NEVER TOO OLD TO HAVE A
+												// PLACE IN MY HEART!
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -177,10 +188,38 @@ public class ShowhowBooking extends JFrame {
 					return;
 				}
 
-				// TODO add booking function
+				// Generate a BookingDTO
+
+				BookingDTO booking = new BookingDTO(0, customerTitleBox.getText(), customerNameBox.getText(),
+						customerPhoneBox.getText(), new java.sql.Date(calendar.getDate().getTime()), 11,
+						new java.sql.Date(new Date().getTime()), 1);
+
+				System.out.println(booking);
+
+				BookingDTO created = BookingSQLUtil.createBooking(booking);
+				if (created == null) {
+					JOptionPane.showMessageDialog(createBookingButton,
+							"Could not create booking.\n" + "Check Details.");
+				} else {
+					BookingConfirmation confirmation = new BookingConfirmation(created);
+					confirmation.setVisible(true);
+					dispose();
+				}
 			}
 		});
 
+	}
+
+	public String getSelectedButtonText(ButtonGroup buttonGroup) {
+		for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
+			AbstractButton button = buttons.nextElement();
+
+			if (button.isSelected()) {
+				return button.getText();
+			}
+		}
+
+		return null;
 	}
 
 	protected boolean isBoxSelected() {
