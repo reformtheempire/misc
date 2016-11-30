@@ -89,7 +89,6 @@ public class BookingSQLUtil {
 				// we return null, a booking doesn't exist
 				return 0;
 			} else {
-				System.out.println("found bookings.");
 				rs.last();
 				int bookingsOnThisDate = rs.getRow();
 				return bookingsOnThisDate;
