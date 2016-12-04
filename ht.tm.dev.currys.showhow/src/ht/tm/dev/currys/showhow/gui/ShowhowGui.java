@@ -85,9 +85,17 @@ public class ShowhowGui {
 		sideBar.setLayout(null);
 
 		JButton showhowButton = new JButton("View ShowHow's");
-		showhowButton.setEnabled(false);
 		showhowButton.setBounds(0, 0, 160, 75);
 		sideBar.add(showhowButton);
+		
+		showhowButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ShowhowViewer viewerDialogue = new ShowhowViewer();
+				viewerDialogue.setVisible(true);
+			}
+		});
 
 		JButton createBookingButton = new JButton("Book ShowHow");
 		createBookingButton.setBounds(0, 86, 160, 75);
@@ -137,7 +145,7 @@ public class ShowhowGui {
 		lblCopyright.setBounds(465, 444, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblCopyright);
 
-		JLabel lblNewLabel = new JLabel("Current Version: ALPHA: 0.1.1");
+		JLabel lblNewLabel = new JLabel("Current Version: ALPHA: 0.2.2");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel.setBounds(465, 427, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblNewLabel);
@@ -147,7 +155,7 @@ public class ShowhowGui {
 		frmShowhowBooker.getContentPane().add(scrollPane);
 		
 		// get today's bookings.
-		TableFormat tf = TableFormatter.formatTable(BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime())));
+		TableFormat tf = TableFormatter.formatTableShowhowGui(BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime())));
 		
 		showhowTable = new JTable(tf.getData(), tf.getTableHeaders());
 		showhowTable.setFillsViewportHeight(true);
