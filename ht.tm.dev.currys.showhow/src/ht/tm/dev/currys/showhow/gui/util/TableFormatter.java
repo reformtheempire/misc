@@ -37,21 +37,22 @@ public class TableFormatter {
 
 	public static TableFormat formatTableShowhowViewer(ArrayList<BookingDTO> bookings) {
 
-		String[] tableHeaders = {"Date", "Time", "Title", "Name", "Telphone"};
+		String[] tableHeaders = {"ID", "Date", "Time", "Title", "Name", "Telphone"};
 		
 		int totalBookings = bookings.size();
 		
-		String[][] data = new String[totalBookings][5];
+		String[][] data = new String[totalBookings][6];
 		
 		int i = 0;
 		DateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 		for (String[] row : data) {
 			BookingDTO booking = bookings.get(i);
-			row[0] = formatter.format(booking.getBookingDate());
-			row[1] = booking.getBookingTime() + "PM";
-			row[2] = booking.getTitle();
-			row[3] = booking.getName();
-			row[4] = booking.getTelephone();
+			row[0] = booking.getId() + "";
+			row[1] = formatter.format(booking.getBookingDate());
+			row[2] = booking.getBookingTime() + "PM";
+			row[3] = booking.getTitle();
+			row[4] = booking.getName();
+			row[5] = booking.getTelephone();
 			i++;
 		}
 		
