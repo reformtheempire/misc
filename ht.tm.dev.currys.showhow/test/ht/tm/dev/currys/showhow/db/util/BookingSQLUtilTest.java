@@ -12,7 +12,7 @@ public class BookingSQLUtilTest {
 
 	@Test
 	public void testGetBookingByID() {
-		BookingDTO booking = BookingSQLUtil.getBookingByID(1);
+		BookingDTO booking = BookingSQLUtil.getBookingByID(11);
 
 		System.out.println(booking.toString());
 	}
@@ -43,5 +43,16 @@ public class BookingSQLUtilTest {
 	public void testGetCountByDate(){
 		Date date = new Date(Calendar.getInstance().getTime().getTime());
 		System.out.println(BookingSQLUtil.getCountByDate(date));
+	}
+	
+	@Test
+	public void testGetBookingsInDateRange(){
+		
+		Date date = new Date(Calendar.getInstance().getTime().getTime());
+		ArrayList<BookingDTO> bookings = BookingSQLUtil.getBookingsInDateRange(date, date);
+		
+		for (BookingDTO bookingDTO : bookings) {
+			System.out.println(bookingDTO);
+		}
 	}
 }

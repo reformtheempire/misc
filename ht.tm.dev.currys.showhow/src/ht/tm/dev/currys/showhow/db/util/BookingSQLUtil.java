@@ -74,6 +74,39 @@ public class BookingSQLUtil {
 		return null;
 	}
 	
+	public static ArrayList<BookingDTO> getBookingsInDateRange(Date dateFrom, Date dateTo) {
+		Connection conn = null;
+		try {
+			conn = SQLConnectionManager.getConnectionToDB();
+
+			PreparedStatement ps = conn.prepareStatement(BookingDTO.selectBetweenTwoDates);
+			ps.setDate(1, dateFrom);
+			ps.setDate(2, dateTo);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs == null) {
+				// we return null, a booking doesn't exist
+				return null;
+			} else {
+				ArrayList<BookingDTO> bookingsOnThisDate = new ArrayList<>();
+				while(rs.next()){
+					bookingsOnThisDate.add(new BookingDTO(rs.getInt("id"), rs.getString("title"), rs.getString("name"),
+						rs.getString("telephone"), rs.getDate("booking_date"), rs.getInt("booking_time"),
+						rs.getDate("created_on"), rs.getInt("created_by")));
+				}
+				return bookingsOnThisDate;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			SQLConnectionManager.closeConnection(conn);
+		}
+
+		return null;
+	}
+	
 	public static int getCountByDate(Date date){
 		
 		Connection conn = null;
