@@ -8,6 +8,7 @@ public class BookingDTO {
 	public static String selectAllOnSpecifiedDate = "select * from bookings where booking_date = ?";
 	public static String selectBetweenTwoDates = "select * from bookings where booking_date between ? and ? order by booking_date asc";
 	public static String insert = "insert into bookings (title, name, telephone, booking_date, booking_time, created_on, created_by) values (?,?,?,?,?,?,?)";
+	public static String updateWhereIDEquals = "update bookings set title = ?, name = ?, telephone = ?, booking_date = ?, booking_time = ? where id = ?";
 	
 	private int id;
 	private String title;

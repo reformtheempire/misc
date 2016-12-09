@@ -27,6 +27,7 @@ import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
 import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
 import ht.tm.dev.currys.showhow.gui.util.TableFormat;
 import ht.tm.dev.currys.showhow.gui.util.TableFormatter;
+import java.awt.Toolkit;
 
 public class ShowhowViewer extends JFrame {
 
@@ -58,6 +59,8 @@ public class ShowhowViewer extends JFrame {
 	 * Create the frame.
 	 */
 	public ShowhowViewer() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ShowhowViewer.class.getResource("/com/alee/managers/notification/icons/types/calendar.png")));
+		setTitle("View ShowHows");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 400);

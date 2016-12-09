@@ -26,6 +26,7 @@ import ht.tm.dev.currys.showhow.gui.util.TableFormatter;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 
 public class ShowhowGui {
 
@@ -33,14 +34,16 @@ public class ShowhowGui {
 	private JFrame frmShowhowBooker;
 	private Date date = new Date(Calendar.getInstance().getTime().getTime());
 	private JTable showhowTable;
+	private JTextArea totalShowhowMessage;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		
+
 		splash.setVisible(true);
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -66,7 +69,8 @@ public class ShowhowGui {
 	 */
 	private void initialize() {
 		frmShowhowBooker = new JFrame();
-		frmShowhowBooker.setIconImage(Toolkit.getDefaultToolkit().getImage(ShowhowGui.class.getResource("/com/alee/laf/optionpane/icons/question.png")));
+		frmShowhowBooker.setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(ShowhowGui.class.getResource("/com/alee/laf/optionpane/icons/question.png")));
 		frmShowhowBooker.setResizable(false);
 		frmShowhowBooker.setTitle("ShowHow Manager");
 		frmShowhowBooker.setBounds(100, 100, 710, 500);
@@ -84,12 +88,15 @@ public class ShowhowGui {
 		panel.add(sideBar);
 		sideBar.setLayout(null);
 
-		JButton showhowButton = new JButton("View ShowHow's");
+		JButton showhowButton = new JButton("View ShowHows");
+		showhowButton.setHorizontalAlignment(SwingConstants.LEFT);
+		showhowButton.setIcon(new ImageIcon(
+				ShowhowGui.class.getResource("/com/alee/managers/notification/icons/types/calendar.png")));
 		showhowButton.setBounds(0, 0, 160, 75);
 		sideBar.add(showhowButton);
-		
+
 		showhowButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				ShowhowViewer viewerDialogue = new ShowhowViewer();
@@ -98,6 +105,9 @@ public class ShowhowGui {
 		});
 
 		JButton createBookingButton = new JButton("Book ShowHow");
+		createBookingButton.setHorizontalAlignment(SwingConstants.LEFT);
+		createBookingButton.setIcon(
+				new ImageIcon(ShowhowGui.class.getResource("/com/alee/managers/notification/icons/types/plus.png")));
 		createBookingButton.setBounds(0, 86, 160, 75);
 		sideBar.add(createBookingButton);
 
@@ -110,12 +120,27 @@ public class ShowhowGui {
 			}
 		});
 
-		JButton adminButton = new JButton("Admin");
-		adminButton.setEnabled(false);
+		JButton adminButton = new JButton("Edit Showhow");
+		adminButton.setHorizontalAlignment(SwingConstants.LEFT);
+		adminButton.setIcon(new ImageIcon(
+				ShowhowGui.class.getResource("/com/alee/managers/notification/icons/types/database.png")));
 		adminButton.setBounds(0, 172, 160, 75);
 		sideBar.add(adminButton);
+		
+		adminButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// open edit panel
+				ShowhowEditor she = new ShowhowEditor();
+				she.setVisible(true);
+			}
+		});
 
 		JButton exitButton = new JButton("Exit");
+		exitButton.setHorizontalAlignment(SwingConstants.LEFT);
+		exitButton.setIcon(
+				new ImageIcon(ShowhowGui.class.getResource("/com/alee/managers/notification/icons/types/cross.png")));
 		exitButton.setBounds(0, 360, 160, 75);
 		sideBar.add(exitButton);
 
@@ -133,9 +158,8 @@ public class ShowhowGui {
 		lblWelcome.setBounds(196, 12, 496, 84);
 		frmShowhowBooker.getContentPane().add(lblWelcome);
 
-		JTextArea totalShowhowMessage = new JTextArea();
+		totalShowhowMessage = new JTextArea();
 		totalShowhowMessage.setFont(new Font("Tahoma", Font.PLAIN, 33));
-		totalShowhowMessage.setText("There are " + BookingSQLUtil.getCountByDate(date) + " ShowHows for today");
 		totalShowhowMessage.setBackground(SystemColor.control);
 		totalShowhowMessage.setEditable(false);
 		totalShowhowMessage.setBounds(190, 119, 514, 55);
@@ -145,23 +169,46 @@ public class ShowhowGui {
 		lblCopyright.setBounds(465, 444, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblCopyright);
 
-		JLabel lblNewLabel = new JLabel("Current Version: ALPHA: 0.2.4");
+		JLabel lblNewLabel = new JLabel("Current Version: ALPHA: 0.3.5");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel.setBounds(465, 427, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblNewLabel);
 
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.setBounds(190, 186, 502, 205);
 		frmShowhowBooker.getContentPane().add(scrollPane);
+
+		// setup the panel for today's bookings:
+		refreshData();
+
+		JButton refreshButton = new JButton("Refresh");
+		refreshButton.setHorizontalAlignment(SwingConstants.LEFT);
+		refreshButton.setIcon(
+				new ImageIcon(ShowhowGui.class.getResource("/com/alee/extended/filechooser/icons/refresh.png")));
+		refreshButton.setBounds(189, 402, 85, 25);
+		frmShowhowBooker.getContentPane().add(refreshButton);
 		
-		// get today's bookings.
-		TableFormat tf = TableFormatter.formatTableShowhowGui(BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime())));
-		
-		showhowTable = new JTable(tf.getData(), tf.getTableHeaders());
-		showhowTable.setFillsViewportHeight(true);
-		
-		scrollPane.setViewportView(showhowTable);
+		refreshButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				refreshData();
+				
+			}
+		});
 
 		splash.dispose();
+	}
+
+	public void refreshData() {
+		// get today's bookings.
+		totalShowhowMessage.setText("There are " + BookingSQLUtil.getCountByDate(date) + " ShowHows for today");
+		TableFormat tf = TableFormatter.formatTableShowhowGui(
+				BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime())));
+
+		showhowTable = new JTable(tf.getData(), tf.getTableHeaders());
+		showhowTable.setFillsViewportHeight(true);
+		scrollPane.setViewportView(showhowTable);
+
 	}
 }

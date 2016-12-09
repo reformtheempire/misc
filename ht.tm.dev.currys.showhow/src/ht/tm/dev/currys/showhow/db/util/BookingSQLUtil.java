@@ -57,10 +57,10 @@ public class BookingSQLUtil {
 				return null;
 			} else {
 				ArrayList<BookingDTO> bookingsOnThisDate = new ArrayList<>();
-				while(rs.next()){
+				while (rs.next()) {
 					bookingsOnThisDate.add(new BookingDTO(rs.getInt("id"), rs.getString("title"), rs.getString("name"),
-						rs.getString("telephone"), rs.getDate("booking_date"), rs.getInt("booking_time"),
-						rs.getDate("created_on"), rs.getInt("created_by")));
+							rs.getString("telephone"), rs.getDate("booking_date"), rs.getInt("booking_time"),
+							rs.getDate("created_on"), rs.getInt("created_by")));
 				}
 				return bookingsOnThisDate;
 			}
@@ -73,7 +73,7 @@ public class BookingSQLUtil {
 
 		return null;
 	}
-	
+
 	public static ArrayList<BookingDTO> getBookingsInDateRange(Date dateFrom, Date dateTo) {
 		Connection conn = null;
 		try {
@@ -90,10 +90,10 @@ public class BookingSQLUtil {
 				return null;
 			} else {
 				ArrayList<BookingDTO> bookingsOnThisDate = new ArrayList<>();
-				while(rs.next()){
+				while (rs.next()) {
 					bookingsOnThisDate.add(new BookingDTO(rs.getInt("id"), rs.getString("title"), rs.getString("name"),
-						rs.getString("telephone"), rs.getDate("booking_date"), rs.getInt("booking_time"),
-						rs.getDate("created_on"), rs.getInt("created_by")));
+							rs.getString("telephone"), rs.getDate("booking_date"), rs.getInt("booking_time"),
+							rs.getDate("created_on"), rs.getInt("created_by")));
 				}
 				return bookingsOnThisDate;
 			}
@@ -106,9 +106,9 @@ public class BookingSQLUtil {
 
 		return null;
 	}
-	
-	public static int getCountByDate(Date date){
-		
+
+	public static int getCountByDate(Date date) {
+
 		Connection conn = null;
 		try {
 			conn = SQLConnectionManager.getConnectionToDB();
@@ -170,6 +170,40 @@ public class BookingSQLUtil {
 		}
 
 		return null;
+	}
+
+	public static boolean updateBooking(BookingDTO booking) {
+		BookingDTO oldBooking = getBookingByID(booking.getId());
+		if (oldBooking == null) {
+			// doesn't exist.
+			return false;
+		}
+
+		Connection conn = null;
+		try {
+			conn = SQLConnectionManager.getConnectionToDB();
+			PreparedStatement ps = conn.prepareStatement(BookingDTO.updateWhereIDEquals);
+
+			ps.setString(1, booking.getTitle());
+			ps.setString(2, booking.getName());
+			ps.setString(3, booking.getTelephone());
+			ps.setDate(4, booking.getBookingDate());
+			ps.setInt(5, booking.getBookingTime());
+			ps.setInt(6, booking.getId());
+
+			int changed = ps.executeUpdate();
+			if (changed == 0) {
+				// couldn't update
+				return false;
+			} else {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			SQLConnectionManager.closeConnection(conn);
+		}
 	}
 
 }

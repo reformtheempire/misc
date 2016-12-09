@@ -27,6 +27,7 @@ import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
 import ht.tm.dev.currys.showhow.gui.alert.BookingConfirmation;
 
 import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 
 public class ShowhowBooking extends JFrame {
 
@@ -59,8 +60,7 @@ public class ShowhowBooking extends JFrame {
 	 * Create the frame.
 	 */
 	public ShowhowBooking() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				ShowhowBooking.class.getResource("/com/alee/managers/notification/icons/types/calendar.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ShowhowBooking.class.getResource("/com/alee/managers/notification/icons/types/plus.png")));
 		setResizable(false);
 		setTitle("Book a ShowHow");
 		setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
@@ -123,6 +123,7 @@ public class ShowhowBooking extends JFrame {
 		customerTitleBorder.add(customerTitleBox);
 
 		JButton createBookingButton = new JButton("Create Booking");
+		createBookingButton.setIcon(new ImageIcon(ShowhowBooking.class.getResource("/com/alee/laf/filechooser/icons/edit.png")));
 		createBookingButton.setBounds(329, 243, 171, 25);
 		mainPanel.add(createBookingButton);
 
