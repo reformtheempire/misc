@@ -28,12 +28,13 @@ public class BookingSQLUtil {
 				return null;
 			} else {
 				rs.next();
+				
 				return new BookingDTO(rs.getInt("id"), rs.getString("title"), rs.getString("name"),
 						rs.getString("telephone"), rs.getDate("booking_date"), rs.getInt("booking_time"),
 						rs.getDate("created_on"), rs.getInt("created_by"));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			// this booking probably doesn't exist.
 			e.printStackTrace();
 		} finally {
 			SQLConnectionManager.closeConnection(conn);
@@ -194,6 +195,29 @@ public class BookingSQLUtil {
 			int changed = ps.executeUpdate();
 			if (changed == 0) {
 				// couldn't update
+				return false;
+			} else {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			SQLConnectionManager.closeConnection(conn);
+		}
+	}
+
+	public static boolean deleteBooking(int id) {
+		Connection conn = null;
+		try {
+			conn = SQLConnectionManager.getConnectionToDB();
+			PreparedStatement ps = conn.prepareStatement(BookingDTO.deleteWhereIDEquals);
+
+			ps.setInt(1, id);
+
+			int changed = ps.executeUpdate();
+			if (changed == 0) {
+				// couldn't delete
 				return false;
 			} else {
 				return true;

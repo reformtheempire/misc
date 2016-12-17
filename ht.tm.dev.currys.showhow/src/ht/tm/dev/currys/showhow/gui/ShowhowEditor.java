@@ -38,9 +38,10 @@ public class ShowhowEditor extends JDialog {
 	private JTextField timeBox;
 	private JButton searchButton;
 	private JDateChooser dateChooser;
-	
+
 	private BookingDTO oldBooking = null;
-	
+	private JButton deleteButton;
+
 	/**
 	 * Launch the application.
 	 */
@@ -175,31 +176,76 @@ public class ShowhowEditor extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton saveButton = new JButton("Save");
+				saveButton.setHorizontalAlignment(SwingConstants.LEFT);
 				saveButton.setIcon(
 						new ImageIcon(ShowhowEditor.class.getResource("/com/alee/extended/ninepatch/icons/save.png")));
 				saveButton.setActionCommand("OK");
 				buttonPane.add(saveButton);
 				getRootPane().setDefaultButton(saveButton);
 				saveButton.addActionListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if(save()){
+						if (save()) {
 							dispose();
 						} else {
-							JOptionPane.showMessageDialog(saveButton, "Could not update booking.\nPlease reload the booking then try again.");
+							JOptionPane.showMessageDialog(saveButton,
+									"Could not update booking.\nPlease reload the booking then try again.");
 						}
 					}
 				});
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setHorizontalAlignment(SwingConstants.LEFT);
 				cancelButton.setIcon(new ImageIcon(
 						ShowhowEditor.class.getResource("/com/alee/extended/filechooser/icons/cancel.png")));
 				cancelButton.setActionCommand("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						dispose();
+					}
+				});
+
+				deleteButton = new JButton("Delete");
+				deleteButton.setHorizontalAlignment(SwingConstants.LEFT);
+				deleteButton.setIcon(new ImageIcon(
+						ShowhowEditor.class.getResource("/com/alee/extended/ninepatch/icons/warning.png")));
+
+				deleteButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						if (oldBooking == null) {
+							JOptionPane.showMessageDialog(deleteButton, "Please search for a booking");
+							return;
+						}
+						delete(oldBooking.getId());
+					}
+				});
+
+				buttonPane.add(deleteButton);
 				buttonPane.add(cancelButton);
 			}
 		}
+
+	}
+
+	private boolean delete(int id) {
+		if (JOptionPane.showConfirmDialog(deleteButton, "Delete ShowHow? with ID: " + id) == 0) {
+			if(BookingSQLUtil.deleteBooking(id)){
+				JOptionPane.showMessageDialog(deleteButton, "Deleted.");
+				dispose();
+				return true;
+			} else {
+				JOptionPane.showMessageDialog(deleteButton, "Could not delete booking.\n"
+						+ "please reload the booking and try again.");
+				return false;
+			}
+		}
+		return false;
 	}
 
 	public void populate(int showhowID) {
@@ -216,13 +262,13 @@ public class ShowhowEditor extends JDialog {
 		oldBooking = showhow;
 	}
 
-	public boolean save() {
-		
-		if(oldBooking == null){
+	private boolean save() {
+
+		if (oldBooking == null) {
 			// nothing to update.
 			return false;
 		}
-		
+
 		int bookingId = Integer.parseInt(idSearchBox.getText());
 		int time = Integer.parseInt(timeBox.getText());
 		BookingDTO newBooking = new BookingDTO(bookingId, titleBox.getText(), nameBox.getText(), telephoneBox.getText(),
