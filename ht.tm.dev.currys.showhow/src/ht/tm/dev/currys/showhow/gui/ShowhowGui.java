@@ -6,20 +6,27 @@ import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.TitledBorder;
 
-import com.alee.laf.WebLookAndFeel;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import com.alee.laf.WebLookAndFeel;
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+
+import ht.tm.dev.currys.showhow.ShowhowApplicationSpecifics;
 import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
+import ht.tm.dev.currys.showhow.db.util.SQLUtil;
 import ht.tm.dev.currys.showhow.gui.util.TableFormat;
 import ht.tm.dev.currys.showhow.gui.util.TableFormatter;
 
@@ -50,8 +57,13 @@ public class ShowhowGui {
 					WebLookAndFeel.install();
 					ShowhowGui window = new ShowhowGui();
 					window.frmShowhowBooker.setVisible(true);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "The application could not start.\n"
+							+ "Check the connection to the database (" + SQLUtil.DB_HOSTNAME +") then relaunch."
+							+ "\n" + ExceptionUtils.getThrowableList(e));
 					e.printStackTrace();
+					System.exit(1);
 				}
 			}
 		});
@@ -169,7 +181,7 @@ public class ShowhowGui {
 		lblCopyright.setBounds(465, 444, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblCopyright);
 
-		JLabel lblNewLabel = new JLabel("Current Version: ALPHA: 0.3.5");
+		JLabel lblNewLabel = new JLabel("Current Version: " + ShowhowApplicationSpecifics.APPLICATION_VERSION);
 		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel.setBounds(465, 427, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblNewLabel);
@@ -202,7 +214,14 @@ public class ShowhowGui {
 
 	public void refreshData() {
 		// get today's bookings.
-		totalShowhowMessage.setText("There are " + BookingSQLUtil.getCountByDate(date) + " ShowHows for today");
+		int todaysBookings = BookingSQLUtil.getCountByDate(date);
+		if(todaysBookings == 0) {
+			totalShowhowMessage.setText("There aren't any ShowHows today!");
+		} else if(todaysBookings == 1){
+			totalShowhowMessage.setText("There is 1 ShowHow today");
+		} else {
+			totalShowhowMessage.setText("There are " + todaysBookings + " ShowHows for today");			
+		}
 		TableFormat tf = TableFormatter.formatTableShowhowGui(
 				BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime())));
 
