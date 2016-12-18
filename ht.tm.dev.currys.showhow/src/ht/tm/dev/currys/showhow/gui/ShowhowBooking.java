@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 
@@ -25,6 +26,7 @@ import com.toedter.calendar.JCalendar;
 import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
 import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
 import ht.tm.dev.currys.showhow.gui.alert.BookingConfirmation;
+import ht.tm.dev.currys.showhow.gui.alert.BookingTimeUnavailableDialog;
 
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
@@ -60,10 +62,10 @@ public class ShowhowBooking extends JFrame {
 	 * Create the frame.
 	 */
 	public ShowhowBooking() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ShowhowBooking.class.getResource("/com/alee/managers/notification/icons/types/plus.png")));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(ShowhowBooking.class.getResource("/com/alee/managers/notification/icons/types/plus.png")));
 		setResizable(false);
 		setTitle("Book a ShowHow");
-		setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 552, 354);
 		contentPane = new JPanel();
@@ -123,7 +125,8 @@ public class ShowhowBooking extends JFrame {
 		customerTitleBorder.add(customerTitleBox);
 
 		JButton createBookingButton = new JButton("Create Booking");
-		createBookingButton.setIcon(new ImageIcon(ShowhowBooking.class.getResource("/com/alee/laf/filechooser/icons/edit.png")));
+		createBookingButton
+				.setIcon(new ImageIcon(ShowhowBooking.class.getResource("/com/alee/laf/filechooser/icons/edit.png")));
 		createBookingButton.setBounds(329, 243, 171, 25);
 		mainPanel.add(createBookingButton);
 
@@ -183,7 +186,6 @@ public class ShowhowBooking extends JFrame {
 				}
 
 				// check if calendar has selected a day outside of Tues - Thurs
-				System.out.println(calendar.getDate().getDay());
 				if (calendar.getDate().getDay() > 4 || calendar.getDate().getDay() <= 1) {
 					JOptionPane.showMessageDialog(createBookingButton, "ShowHow is only available Tuesday to Thursday");
 					return;
@@ -204,6 +206,18 @@ public class ShowhowBooking extends JFrame {
 				}
 				// Generate a BookingDTO
 
+				int[] unavailableSlots = isTimeAvailable(new java.sql.Date(calendar.getDate().getTime()), time);
+
+				if (unavailableSlots.length != 0) {
+					BookingTimeUnavailableDialog timeSelector = new BookingTimeUnavailableDialog(unavailableSlots, time);
+					timeSelector.setVisible(true);
+					if (timeSelector.selection == 0) {
+						// do nothing. cancel.
+						return;
+					}
+					time = timeSelector.selection;
+				}
+
 				BookingDTO booking = new BookingDTO(0, customerTitleBox.getText(), customerNameBox.getText(),
 						customerPhoneBox.getText(), new java.sql.Date(calendar.getDate().getTime()), time,
 						new java.sql.Date(new Date().getTime()), 1);
@@ -222,6 +236,30 @@ public class ShowhowBooking extends JFrame {
 			}
 		});
 
+	}
+
+	protected int[] isTimeAvailable(java.sql.Date date, int time) {
+		ArrayList<BookingDTO> timesInUse = BookingSQLUtil.getBookingsByDate(date);
+		int[] unavailableSlots = new int[0];
+
+		if (timesInUse == null || timesInUse.isEmpty()) {
+			return unavailableSlots;
+		}
+		boolean IsSelectedTimeUnavailable = false;
+		for (BookingDTO bookingDTO : timesInUse) {
+			if (bookingDTO.getBookingTime() == time) {
+				IsSelectedTimeUnavailable = true;
+			}
+		}
+		if (IsSelectedTimeUnavailable) {
+			unavailableSlots = new int[timesInUse.size()];
+			int i = 0;
+			for (BookingDTO booking : timesInUse) {
+				unavailableSlots[i] = booking.getBookingTime();
+				i++;
+			}
+		}
+		return unavailableSlots;
 	}
 
 	public String getSelectedButtonText(ButtonGroup buttonGroup) {
