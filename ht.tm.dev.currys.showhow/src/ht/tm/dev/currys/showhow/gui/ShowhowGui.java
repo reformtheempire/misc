@@ -62,11 +62,11 @@ public class ShowhowGui {
 					WebLookAndFeel.install();
 					ShowhowGui window = new ShowhowGui();
 					window.frmShowhowBooker.setVisible(true);
-				}
-				catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "The application could not start.\n"
-							+ "Check the connection to the database (" + SQLUtil.DB_HOSTNAME +") then relaunch."
-							+ "\n" + ExceptionUtils.getThrowableList(e));
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null,
+							"The application could not start.\n" + "Check the connection to the database ("
+									+ SQLUtil.DB_HOSTNAME + ") then relaunch." + "\n"
+									+ ExceptionUtils.getThrowableList(e));
 					e.printStackTrace();
 					System.exit(1);
 				}
@@ -143,9 +143,9 @@ public class ShowhowGui {
 				ShowhowGui.class.getResource("/com/alee/managers/notification/icons/types/database.png")));
 		adminButton.setBounds(0, 172, 160, 75);
 		sideBar.add(adminButton);
-		
+
 		adminButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// open edit panel
@@ -186,41 +186,52 @@ public class ShowhowGui {
 		lblCopyright.setBounds(465, 444, 227, 15);
 		frmShowhowBooker.getContentPane().add(lblCopyright);
 
-		JLabel lblNewLabel = new JLabel("Current Version: " + ShowhowApplicationSpecifics.APPLICATION_VERSION);
-		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblNewLabel.setBounds(465, 427, 227, 15);
-		frmShowhowBooker.getContentPane().add(lblNewLabel);
+		String development = System.getProperty("devMode");
+		boolean isDev = "true".equalsIgnoreCase(development);
+		
+		JLabel versionLabel;
+		
+		if (isDev) {
+			versionLabel = new JLabel("Current Version: " + ShowhowApplicationSpecifics.DEVELOPMENT_VERSION);
+		} else {
+			versionLabel = new JLabel("Current Version: " + ShowhowApplicationSpecifics.APPLICATION_VERSION);
+		}
+
+		versionLabel.setHorizontalAlignment(SwingConstants.TRAILING);
+		versionLabel.setBounds(465, 427, 227, 15);
+		frmShowhowBooker.getContentPane().add(versionLabel);
 
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(190, 186, 502, 205);
 		frmShowhowBooker.getContentPane().add(scrollPane);
-		
+
 		// setup the panel for today's bookings:
 		refreshData();
-		
+
 		// setup the printer util
 		printer.setBookings(bookings);
-		
+
 		JButton refreshButton = new JButton("Refresh");
 		refreshButton.setHorizontalAlignment(SwingConstants.LEFT);
 		refreshButton.setIcon(
 				new ImageIcon(ShowhowGui.class.getResource("/com/alee/extended/filechooser/icons/refresh.png")));
 		refreshButton.setBounds(189, 402, 85, 25);
 		frmShowhowBooker.getContentPane().add(refreshButton);
-		
+
 		JButton printButton = new JButton("Print");
 		printButton.setHorizontalAlignment(SwingConstants.LEFT);
-		printButton.setIcon(new ImageIcon(ShowhowGui.class.getResource("/com/alee/extended/language/icons/record.png")));
+		printButton
+				.setIcon(new ImageIcon(ShowhowGui.class.getResource("/com/alee/extended/language/icons/record.png")));
 		printButton.setBounds(285, 402, 85, 25);
 		frmShowhowBooker.getContentPane().add(printButton);
 		printButton.addActionListener(printer);
-		
+
 		refreshButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				refreshData();
-				
+
 			}
 		});
 
@@ -230,16 +241,16 @@ public class ShowhowGui {
 	public void refreshData() {
 		// get today's bookings.
 		int todaysBookings = BookingSQLUtil.getCountByDate(date);
-		if(todaysBookings == 0) {
+		if (todaysBookings == 0) {
 			totalShowhowMessage.setText("There aren't any ShowHows today!");
-		} else if(todaysBookings == 1){
+		} else if (todaysBookings == 1) {
 			totalShowhowMessage.setText("There is 1 ShowHow today");
 		} else {
-			totalShowhowMessage.setText("There are " + todaysBookings + " ShowHows for today");			
+			totalShowhowMessage.setText("There are " + todaysBookings + " ShowHows for today");
 		}
-		
+
 		bookings = BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime()));
-		
+
 		TableFormat tf = TableFormatter.formatTableShowhowGui(bookings);
 		printer.setBookings(bookings);
 

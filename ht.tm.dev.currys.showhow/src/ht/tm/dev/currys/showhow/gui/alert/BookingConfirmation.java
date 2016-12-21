@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import com.alee.laf.WebLookAndFeel;
 
 import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
+import ht.tm.dev.currys.showhow.print.BookingPrintUtil;
 
 import javax.swing.JTextPane;
 import java.awt.SystemColor;
@@ -20,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.util.Calendar;
+import javax.swing.ImageIcon;
 
 public class BookingConfirmation extends JDialog {
 
@@ -73,7 +75,14 @@ public class BookingConfirmation extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
+				JButton btnPrint = new JButton("Print");
+				btnPrint.setIcon(new ImageIcon(BookingConfirmation.class.getResource("/com/alee/extended/language/icons/record.png")));
+				buttonPane.add(btnPrint);
+				btnPrint.addActionListener(new BookingPrintUtil(booking));
+			}
+			{
 				JButton closeButton = new JButton("Close");
+				closeButton.setIcon(new ImageIcon(BookingConfirmation.class.getResource("/com/alee/laf/filechooser/icons/remove.png")));
 				closeButton.setActionCommand("OK");
 				buttonPane.add(closeButton);
 				getRootPane().setDefaultButton(closeButton);

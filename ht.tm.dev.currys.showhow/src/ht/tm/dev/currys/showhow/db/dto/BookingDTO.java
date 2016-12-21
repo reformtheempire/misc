@@ -85,4 +85,16 @@ public class BookingDTO {
 				+ ", createdBy=" + createdBy + "]";
 	}
 
+	public String toConfirmationString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ID: " + id);
+		sb.append("\n");
+		sb.append("Name: " + name);
+		sb.append("\n");
+		sb.append("Telephone: " + telephone);
+		sb.append("\n");
+		sb.append("Date: " + bookingDate + " Time: " + bookingTime);
+		return sb.toString();
+	}
+
 }
