@@ -10,7 +10,7 @@ public class BookingDTO {
 	public static final String insert = "insert into bookings (title, name, telephone, booking_date, booking_time, created_on, created_by) values (?,?,?,?,?,?,?)";
 	public static final String updateWhereIDEquals = "update bookings set title = ?, name = ?, telephone = ?, booking_date = ?, booking_time = ? where id = ?";
 	public static final String deleteWhereIDEquals = "delete from bookings where id = ?";
-	
+
 	private int id;
 	private String title;
 	private String name;
@@ -65,7 +65,19 @@ public class BookingDTO {
 		return createdBy;
 	}
 
-	
+	public String toPrinterString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(bookingDate);
+		sb.append(" ");
+		sb.append(bookingTime);
+		sb.append("pm    ");
+		sb.append(title + " " + name);
+		sb.append("  ");
+		sb.append(telephone);
+		
+		return sb.toString();
+	}
+
 	@Override
 	public String toString() {
 		return "BookingDTO [id=" + id + ", title=" + title + ", name=" + name + ", telephone=" + telephone

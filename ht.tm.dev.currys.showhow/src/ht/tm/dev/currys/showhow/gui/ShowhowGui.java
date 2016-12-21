@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.swing.JButton;
@@ -25,10 +26,12 @@ import com.alee.laf.WebLookAndFeel;
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 
 import ht.tm.dev.currys.showhow.ShowhowApplicationSpecifics;
+import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
 import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
 import ht.tm.dev.currys.showhow.db.util.SQLUtil;
 import ht.tm.dev.currys.showhow.gui.util.TableFormat;
 import ht.tm.dev.currys.showhow.gui.util.TableFormatter;
+import ht.tm.dev.currys.showhow.print.ShowhowPrintUtil;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
@@ -43,6 +46,8 @@ public class ShowhowGui {
 	private JTable showhowTable;
 	private JTextArea totalShowhowMessage;
 	private JScrollPane scrollPane;
+	private ArrayList<BookingDTO> bookings;
+	private ShowhowPrintUtil printer = new ShowhowPrintUtil(bookings);
 
 	/**
 	 * Launch the application.
@@ -189,16 +194,26 @@ public class ShowhowGui {
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(190, 186, 502, 205);
 		frmShowhowBooker.getContentPane().add(scrollPane);
-
+		
 		// setup the panel for today's bookings:
 		refreshData();
-
+		
+		// setup the printer util
+		printer.setBookings(bookings);
+		
 		JButton refreshButton = new JButton("Refresh");
 		refreshButton.setHorizontalAlignment(SwingConstants.LEFT);
 		refreshButton.setIcon(
 				new ImageIcon(ShowhowGui.class.getResource("/com/alee/extended/filechooser/icons/refresh.png")));
 		refreshButton.setBounds(189, 402, 85, 25);
 		frmShowhowBooker.getContentPane().add(refreshButton);
+		
+		JButton printButton = new JButton("Print");
+		printButton.setHorizontalAlignment(SwingConstants.LEFT);
+		printButton.setIcon(new ImageIcon(ShowhowGui.class.getResource("/com/alee/extended/language/icons/record.png")));
+		printButton.setBounds(285, 402, 85, 25);
+		frmShowhowBooker.getContentPane().add(printButton);
+		printButton.addActionListener(printer);
 		
 		refreshButton.addActionListener(new ActionListener() {
 			
@@ -222,8 +237,11 @@ public class ShowhowGui {
 		} else {
 			totalShowhowMessage.setText("There are " + todaysBookings + " ShowHows for today");			
 		}
-		TableFormat tf = TableFormatter.formatTableShowhowGui(
-				BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime())));
+		
+		bookings = BookingSQLUtil.getBookingsByDate(new Date(Calendar.getInstance().getTime().getTime()));
+		
+		TableFormat tf = TableFormatter.formatTableShowhowGui(bookings);
+		printer.setBookings(bookings);
 
 		showhowTable = new JTable(tf.getData(), tf.getTableHeaders());
 		showhowTable.setFillsViewportHeight(true);

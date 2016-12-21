@@ -27,13 +27,20 @@ import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
 import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
 import ht.tm.dev.currys.showhow.gui.util.TableFormat;
 import ht.tm.dev.currys.showhow.gui.util.TableFormatter;
+import ht.tm.dev.currys.showhow.print.ShowhowPrintUtil;
+
 import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 
 public class ShowhowViewer extends JFrame {
 
 	private JPanel contentPane;
 	private JTable table;
 	private JTextField idField;
+
+	private ArrayList<BookingDTO> bookings;
+	ShowhowPrintUtil printUtil = new ShowhowPrintUtil(getBookings());
+
 
 	/**
 	 * Launch the application.
@@ -102,26 +109,31 @@ public class ShowhowViewer extends JFrame {
 		table = new JTable();
 		scrollPane.setViewportView(table);
 
-		JButton btnNewButton = new JButton("Search");
-		btnNewButton.setBounds(487, 335, 95, 25);
-		contentPane.add(btnNewButton);
+		JButton searchButton = new JButton("Search");
+		searchButton.setIcon(new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/style/icons/editor/magnifier.png")));
+		searchButton.setHorizontalAlignment(SwingConstants.LEFT);
+		searchButton.setBounds(487, 335, 95, 25);
+		contentPane.add(searchButton);
 
-		btnNewButton.addActionListener(new ActionListener() {
+		searchButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				TableFormat tf = new TableFormat(null, null);
-
-				tf = TableFormatter.formatTableShowhowViewer(BookingSQLUtil.getBookingsInDateRange(
+				setBookings(BookingSQLUtil.getBookingsInDateRange(
 						new java.sql.Date(dateFromBox.getJCalendar().getCalendar().getTime().getTime()),
 						new java.sql.Date(dateToBox.getJCalendar().getCalendar().getTime().getTime())));
-
+				tf = TableFormatter.formatTableShowhowViewer(getBookings());
+				printUtil.setBookings(bookings);
 				table = new JTable(tf.getData(), tf.getTableHeaders());
 				scrollPane.setViewportView(table);
 			}
 		});
 
 		JButton btnExit = new JButton("Exit");
+		btnExit.setSelectedIcon(new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/optionpane/icons/error.png")));
+		btnExit.setIcon(new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/tab/icons/menu/closeOthers.png")));
+		btnExit.setHorizontalAlignment(SwingConstants.LEFT);
 		btnExit.setBounds(12, 335, 95, 25);
 		contentPane.add(btnExit);
 
@@ -144,7 +156,15 @@ public class ShowhowViewer extends JFrame {
 		txtpnUseThisMenu.setEditable(false);
 		txtpnUseThisMenu.setBounds(321, 12, 242, 33);
 		contentPane.add(txtpnUseThisMenu);
-
+		
+		JButton printButton = new JButton("Print");
+		printButton.setHorizontalAlignment(SwingConstants.LEFT);
+		printButton.setIcon(new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/language/icons/record.png")));
+		printButton.setBounds(381, 335, 95, 25);
+		contentPane.add(printButton);
+		
+		printButton.addActionListener(printUtil);
+		
 		btnExit.addActionListener(new ActionListener() {
 
 			@Override
@@ -152,5 +172,13 @@ public class ShowhowViewer extends JFrame {
 				dispose();
 			}
 		});
+	}
+
+	public ArrayList<BookingDTO> getBookings() {
+		return bookings;
+	}
+
+	public void setBookings(ArrayList<BookingDTO> bookings) {
+		this.bookings = bookings;
 	}
 }

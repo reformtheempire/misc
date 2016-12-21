@@ -2,6 +2,7 @@ package ht.tm.dev.currys.showhow.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -29,11 +30,11 @@ public class LoginPanel extends JDialog {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		
-		if(!WebLookAndFeel.isInstalled()){
+
+		if (!WebLookAndFeel.isInstalled()) {
 			WebLookAndFeel.install();
 		}
-		
+
 		try {
 			LoginPanel dialog = new LoginPanel();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -56,22 +57,22 @@ public class LoginPanel extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
-		
+
 		JLabel lblUsername = new JLabel("Username");
 		lblUsername.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblUsername.setBounds(12, 17, 61, 15);
 		contentPanel.add(lblUsername);
-		
+
 		JLabel lblPassword = new JLabel("Password");
 		lblPassword.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblPassword.setBounds(12, 44, 61, 15);
 		contentPanel.add(lblPassword);
-		
+
 		textField = new JTextField();
 		textField.setBounds(89, 12, 179, 25);
 		contentPanel.add(textField);
 		textField.setColumns(10);
-		
+
 		passwordField = new JPasswordField();
 		passwordField.setBounds(89, 39, 179, 25);
 		contentPanel.add(passwordField);
@@ -89,9 +90,9 @@ public class LoginPanel extends JDialog {
 				JButton exitButton = new JButton("Exit");
 				exitButton.setActionCommand("Cancel");
 				buttonPane.add(exitButton);
-				
+
 				exitButton.addActionListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						dispose();
