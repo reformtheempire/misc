@@ -1,7 +1,15 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2016-11-30 19:01:45.717
+-- Last modification date: 2017-01-06 10:08:55.951
 
 -- tables
+-- Table: application_properties
+CREATE TABLE application_properties (
+    id int NOT NULL,
+    property varchar(120) NOT NULL,
+    value varchar(120) NOT NULL,
+    CONSTRAINT application_properties_pk PRIMARY KEY (id)
+);
+
 -- Table: bookings
 CREATE TABLE bookings (
     id int NOT NULL AUTO_INCREMENT COMMENT 'incremental ID of the booking',
@@ -15,6 +23,16 @@ CREATE TABLE bookings (
     CONSTRAINT bookings_pk PRIMARY KEY (id)
 ) COMMENT 'A table to contain bookings.';
 
+-- Table: notes
+CREATE TABLE notes (
+    id int NOT NULL,
+    booking_id int NOT NULL,
+    note varchar(256) NOT NULL,
+    created_on date NOT NULL,
+    created_by int NOT NULL,
+    CONSTRAINT notes_pk PRIMARY KEY (id)
+) COMMENT 'A Table of notes for a booking';
+
 -- Table: users
 CREATE TABLE users (
     id int NOT NULL,
@@ -27,6 +45,14 @@ CREATE TABLE users (
 -- foreign keys
 -- Reference: bookings_users (table: bookings)
 ALTER TABLE bookings ADD CONSTRAINT bookings_users FOREIGN KEY bookings_users (created_by)
+    REFERENCES users (id);
+
+-- Reference: notes_bookings (table: notes)
+ALTER TABLE notes ADD CONSTRAINT notes_bookings FOREIGN KEY notes_bookings (booking_id)
+    REFERENCES bookings (id);
+
+-- Reference: notes_users (table: notes)
+ALTER TABLE notes ADD CONSTRAINT notes_users FOREIGN KEY notes_users (created_by)
     REFERENCES users (id);
 
 -- End of file.
