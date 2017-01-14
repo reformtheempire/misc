@@ -34,6 +34,28 @@ public class TableFormatter {
 		TableFormat tf = new TableFormat(tableHeaders, data);
 		return tf;
 	}
+	
+	public static TableFormat formatTableBookingQuantityConfirmation(ArrayList<BookingDTO> bookings) {
+
+		String[] tableHeaders = {"Time", "Title", "Name"};
+		
+		int totalBookings = bookings.size();
+		
+		String[][] data = new String[totalBookings][3];
+		
+		int i = 0;
+		for (String[] row : data) {
+			BookingDTO booking = bookings.get(i);
+			row[0] = booking.getBookingTime() + "PM";
+			row[1] = booking.getTitle();
+			row[2] = booking.getName();
+			i++;
+		}
+		
+		
+		TableFormat tf = new TableFormat(tableHeaders, data);
+		return tf;
+	}
 
 	public static TableFormat formatTableShowhowViewer(ArrayList<BookingDTO> bookings) {
 

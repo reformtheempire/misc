@@ -11,6 +11,7 @@ import java.util.Calendar;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -19,6 +20,8 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.alee.laf.WebLookAndFeel;
 import com.toedter.calendar.JDateChooser;
@@ -40,7 +43,6 @@ public class ShowhowViewer extends JFrame {
 
 	private ArrayList<BookingDTO> bookings;
 	ShowhowPrintUtil printUtil = new ShowhowPrintUtil(getBookings());
-
 
 	/**
 	 * Launch the application.
@@ -66,7 +68,8 @@ public class ShowhowViewer extends JFrame {
 	 * Create the frame.
 	 */
 	public ShowhowViewer() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ShowhowViewer.class.getResource("/com/alee/managers/notification/icons/types/calendar.png")));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(ShowhowViewer.class.getResource("/com/alee/managers/notification/icons/types/calendar.png")));
 		setTitle("View ShowHows");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -106,11 +109,12 @@ public class ShowhowViewer extends JFrame {
 				new java.sql.Date(dateFromBox.getJCalendar().getCalendar().getTime().getTime()),
 				new java.sql.Date(dateToBox.getJCalendar().getCalendar().getTime().getTime())));
 		table = new JTable(tf.getData(), tf.getTableHeaders());
-		table = new JTable();
+		// table = new JTable();
 		scrollPane.setViewportView(table);
 
 		JButton searchButton = new JButton("Search");
-		searchButton.setIcon(new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/style/icons/editor/magnifier.png")));
+		searchButton.setIcon(
+				new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/style/icons/editor/magnifier.png")));
 		searchButton.setHorizontalAlignment(SwingConstants.LEFT);
 		searchButton.setBounds(487, 335, 95, 25);
 		contentPane.add(searchButton);
@@ -120,9 +124,37 @@ public class ShowhowViewer extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				TableFormat tf = new TableFormat(null, null);
-				setBookings(BookingSQLUtil.getBookingsInDateRange(
-						new java.sql.Date(dateFromBox.getJCalendar().getCalendar().getTime().getTime()),
-						new java.sql.Date(dateToBox.getJCalendar().getCalendar().getTime().getTime())));
+
+				if (StringUtils.isEmpty(idField.getText()) || StringUtils.containsWhitespace(idField.getText())) {
+					setBookings(BookingSQLUtil.getBookingsInDateRange(
+							new java.sql.Date(dateFromBox.getJCalendar().getCalendar().getTime().getTime()),
+							new java.sql.Date(dateToBox.getJCalendar().getCalendar().getTime().getTime())));
+				} else {
+					ArrayList<BookingDTO> bookings = new ArrayList<>();
+					int id = 0;
+
+					try {
+						id = Integer.parseInt(idField.getText());
+					} catch (NumberFormatException ex) {
+						JOptionPane.showMessageDialog(searchButton, "This is not a valid ID.");
+						ex.printStackTrace();
+					}
+					if (id != 0) {
+
+						BookingDTO booking = BookingSQLUtil.getBookingByID(id);
+
+						if (booking != null) {
+							bookings.add(booking);
+							setBookings(bookings);
+						} else {
+							setBookings(new ArrayList<BookingDTO>());
+							JOptionPane.showMessageDialog(searchButton, "Cannot find a booking with ID: " + id);
+						}
+					} else {
+						setBookings(new ArrayList<BookingDTO>());
+					}
+				}
+
 				tf = TableFormatter.formatTableShowhowViewer(getBookings());
 				printUtil.setBookings(bookings);
 				table = new JTable(tf.getData(), tf.getTableHeaders());
@@ -130,17 +162,17 @@ public class ShowhowViewer extends JFrame {
 			}
 		});
 
-		JButton btnExit = new JButton("Exit");
-		btnExit.setSelectedIcon(new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/optionpane/icons/error.png")));
-		btnExit.setIcon(new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/tab/icons/menu/closeOthers.png")));
-		btnExit.setHorizontalAlignment(SwingConstants.LEFT);
-		btnExit.setBounds(12, 335, 95, 25);
-		contentPane.add(btnExit);
+		JButton exitButton = new JButton("Exit");
+		exitButton.setSelectedIcon(
+				new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/optionpane/icons/error.png")));
+		exitButton.setIcon(
+				new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/tab/icons/menu/closeOthers.png")));
+		exitButton.setHorizontalAlignment(SwingConstants.LEFT);
+		exitButton.setBounds(12, 335, 95, 25);
+		contentPane.add(exitButton);
 
 		idField = new JTextField();
-		idField.setToolTipText("Coming Soon!");
-		idField.setEnabled(false);
-		idField.setEditable(false);
+		idField.setToolTipText("Enter a ShowHow ID");
 		idField.setHorizontalAlignment(SwingConstants.TRAILING);
 		idField.setBounds(362, 46, 207, 38);
 		contentPane.add(idField);
@@ -156,16 +188,48 @@ public class ShowhowViewer extends JFrame {
 		txtpnUseThisMenu.setEditable(false);
 		txtpnUseThisMenu.setBounds(321, 12, 242, 33);
 		contentPane.add(txtpnUseThisMenu);
-		
+
 		JButton printButton = new JButton("Print");
 		printButton.setHorizontalAlignment(SwingConstants.LEFT);
-		printButton.setIcon(new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/language/icons/record.png")));
+		printButton.setIcon(
+				new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/language/icons/record.png")));
 		printButton.setBounds(381, 335, 95, 25);
 		contentPane.add(printButton);
-		
+
+		JButton editButton = new JButton("Edit");
+		editButton.setIcon(
+				new ImageIcon(ShowhowViewer.class.getResource("/com/alee/extended/filechooser/icons/edit.png")));
+		editButton.setBounds(285, 335, 85, 25);
+		contentPane.add(editButton);
+
+		editButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (table.getSelectedRows().length != 0) {
+
+					// TODO: Add edit function here
+					/*
+					 * Get selected row, Get ID from selected row, search for
+					 * showhow by ID, if exists, open edit panel
+					 * 
+					 */
+					
+					int row = table.getSelectedRow();
+					int id = Integer.parseInt((String) table.getValueAt(row, 0));
+					
+					ShowhowEditor she = new ShowhowEditor(id);
+					she.setVisible(true);
+					
+				}
+
+			}
+		});
+
 		printButton.addActionListener(printUtil);
-		
-		btnExit.addActionListener(new ActionListener() {
+
+		exitButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {

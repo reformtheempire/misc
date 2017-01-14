@@ -1,8 +1,8 @@
 package ht.tm.dev.currys.showhow.gui;
 
-import java.awt.Dialog.ModalExclusionType;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -26,10 +27,8 @@ import com.toedter.calendar.JCalendar;
 import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
 import ht.tm.dev.currys.showhow.db.util.BookingSQLUtil;
 import ht.tm.dev.currys.showhow.gui.alert.BookingConfirmation;
+import ht.tm.dev.currys.showhow.gui.alert.BookingQuantityConfirmation;
 import ht.tm.dev.currys.showhow.gui.alert.BookingTimeUnavailableDialog;
-
-import java.awt.Toolkit;
-import javax.swing.ImageIcon;
 
 public class ShowhowBooking extends JFrame {
 
@@ -204,12 +203,24 @@ public class ShowhowBooking extends JFrame {
 				} else if (buttonSelected.equals("4:00 PM")) {
 					time = 4;
 				}
-				// Generate a BookingDTO
 
+				// Check for existing bookings on this date
+				if (BookingSQLUtil.getCountByDate((new java.sql.Date(calendar.getDate().getTime()))) > 0) {
+					BookingQuantityConfirmation bqc = new BookingQuantityConfirmation(
+							BookingSQLUtil.getBookingsByDate(new java.sql.Date(calendar.getDate().getTime())));
+					bqc.setVisible(true);
+					if (!bqc.response) {
+						// cancel
+						return;
+					}
+				}
+
+				// Get unavailable times
 				int[] unavailableSlots = isTimeAvailable(new java.sql.Date(calendar.getDate().getTime()), time);
 
 				if (unavailableSlots.length != 0) {
-					BookingTimeUnavailableDialog timeSelector = new BookingTimeUnavailableDialog(unavailableSlots, time);
+					BookingTimeUnavailableDialog timeSelector = new BookingTimeUnavailableDialog(unavailableSlots,
+							time);
 					timeSelector.setVisible(true);
 					if (timeSelector.selection == 0) {
 						// do nothing. cancel.
@@ -218,6 +229,7 @@ public class ShowhowBooking extends JFrame {
 					time = timeSelector.selection;
 				}
 
+				// Generate a BookingDTO
 				BookingDTO booking = new BookingDTO(0, customerTitleBox.getText(), customerNameBox.getText(),
 						customerPhoneBox.getText(), new java.sql.Date(calendar.getDate().getTime()), time,
 						new java.sql.Date(new Date().getTime()), 1);

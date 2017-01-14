@@ -17,6 +17,8 @@ import javax.swing.border.TitledBorder;
 import com.alee.laf.WebLookAndFeel;
 
 import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
+import ht.tm.dev.currys.showhow.print.BookingPrintUtil;
+import ht.tm.dev.currys.showhow.print.ShowhowPrintUtil;
 
 import javax.swing.JLabel;
 
@@ -147,6 +149,13 @@ public class BookingEditConfirmation extends JDialog {
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			{
+				JButton btnPrintConfirmation = new JButton("Print Confirmation");
+				buttonPane.add(btnPrintConfirmation);
+				
+				btnPrintConfirmation.addActionListener(new BookingPrintUtil(newBooking));
+				
+			}
 			{
 				JButton exitButton = new JButton("Exit");
 				buttonPane.add(exitButton);

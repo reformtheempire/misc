@@ -3,27 +3,28 @@ package ht.tm.dev.currys.showhow.gui;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.alee.laf.WebLookAndFeel;
-import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 
 import ht.tm.dev.currys.showhow.ShowhowApplicationSpecifics;
 import ht.tm.dev.currys.showhow.db.dto.BookingDTO;
@@ -32,11 +33,6 @@ import ht.tm.dev.currys.showhow.db.util.SQLUtil;
 import ht.tm.dev.currys.showhow.gui.util.TableFormat;
 import ht.tm.dev.currys.showhow.gui.util.TableFormatter;
 import ht.tm.dev.currys.showhow.print.ShowhowPrintUtil;
-
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import java.awt.Toolkit;
-import javax.swing.ImageIcon;
 
 public class ShowhowGui {
 
