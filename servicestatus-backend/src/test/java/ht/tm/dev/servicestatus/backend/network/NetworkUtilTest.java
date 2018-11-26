@@ -10,6 +10,7 @@ import org.junit.Test;
 import ht.tm.dev.servicestatus.backend.objects.service.Service;
 import ht.tm.dev.servicestatus.backend.objects.service.ServiceStatus;
 import ht.tm.dev.servicestatus.backend.objects.service.ServiceType;
+import ht.tm.dev.servicestatus.backend.util.network.NetworkUtil;
 
 public class NetworkUtilTest {
 

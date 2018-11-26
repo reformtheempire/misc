@@ -1,4 +1,4 @@
-package ht.tm.dev.servicestatus.backend.network;
+package ht.tm.dev.servicestatus.backend.util.network;
 
 import java.io.IOException;
 import java.net.InetAddress;
