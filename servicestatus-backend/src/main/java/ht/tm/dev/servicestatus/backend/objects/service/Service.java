@@ -1,5 +1,10 @@
 package ht.tm.dev.servicestatus.backend.objects.service;
 
+import java.util.ArrayList;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 public class Service {
 
 	private int key;
@@ -34,6 +39,9 @@ public class Service {
 				+ "]";
 	}
 	
-	
+	public String toJson() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
+	}
 	
 }

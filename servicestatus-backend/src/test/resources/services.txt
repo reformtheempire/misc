@@ -1,0 +1,32 @@
+[
+  {
+    "key": 0,
+    "name": "localhost",
+    "hostname": "localhost",
+    "serviceType": "INFRASTRUCTURE"
+  },
+  {
+    "key": 1,
+    "name": "offline address",
+    "hostname": "10.111.0.1",
+    "serviceType": "MISC"
+  },
+  {
+    "key": 2,
+    "name": "Google",
+    "hostname": "google.com",
+    "serviceType": "WEB_SERVER"
+  },
+  {
+    "key": 3,
+    "name": "CSAT",
+    "hostname": "csat.academy",
+    "serviceType": "WEB_SERVER"
+  },
+  {
+    "key": 4,
+    "name": "TMM Web Server",
+    "hostname": "tom.ht",
+    "serviceType": "WEB_SERVER"
+  }
+]
